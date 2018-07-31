@@ -254,6 +254,7 @@ func (s *matchingEngineSuite) PollForDecisionTasksResultTest() {
 	}
 
 	_, err := s.matchingEngine.AddDecisionTask(&addRequest)
+
 	s.NoError(err)
 
 	taskList := &workflow.TaskList{}

@@ -45,7 +45,6 @@ import (
 	"github.com/uber/cadence/common"
 	"github.com/uber/cadence/common/backoff"
 	"github.com/uber/cadence/common/cache"
-	"github.com/uber/cadence/common/client"
 	"github.com/uber/cadence/common/logging"
 	"github.com/uber/cadence/common/metrics"
 	"github.com/uber/cadence/common/persistence"
@@ -2037,14 +2036,9 @@ func (wh *WorkflowHandler) QueryWorkflow(ctx context.Context,
 	if err != nil {
 		return nil, wh.error(err, scope)
 	}
-	clientFeature := client.NewFeatureImpl(
-		response.GetClientLibraryVersion(),
-		response.GetClientFeatureVersion(),
-		response.GetClientImpl(),
-	)
 
 	queryRequest.Execution.RunId = response.Execution.RunId
-	if len(response.StickyTaskList.GetName()) != 0 && clientFeature.SupportStickyQuery() {
+	if len(response.StickyTaskList.GetName()) != 0 {
 		matchingRequest.TaskList = response.StickyTaskList
 		stickyDecisionTimeout := response.GetStickyTaskListScheduleToStartTimeout()
 		// using a clean new context in case customer provide a context which has

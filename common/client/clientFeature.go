@@ -36,11 +36,6 @@ const (
 var defaultVersion = version{0, 0, 0}
 
 type (
-	// Feature provides information about client's capibility
-	Feature interface {
-		SupportStickyQuery() bool
-	}
-
 	// FeatureImpl is used for determining the client's capibility.
 	// This can be useful when service support a feature, while
 	// client does not, so we can use be backward comparible
@@ -67,11 +62,6 @@ func NewFeatureImpl(libVersion string, featureVersion string, lang string) *Feat
 	}
 
 	return impl
-}
-
-// SupportStickyQuery whether a client support sticky query
-func (feature *FeatureImpl) SupportStickyQuery() bool {
-	return feature.featureVersion.major > 0
 }
 
 func parseVersion(versionStr string) version {

@@ -47,11 +47,16 @@ func (s *FeatureSuite) TestSupportStickyQuery() {
 	featureVersion := "1.0.0"
 	lang := "go"
 	feature := NewFeatureImpl(libVersion, featureVersion, lang)
-	s.True(feature.SupportStickyQuery(), "Should support sticky query")
+	s.True(feature.SupportFeature(), "Should support feature")
 
 	libVersion = ""
 	featureVersion = ""
 	lang = ""
 	feature = NewFeatureImpl(libVersion, featureVersion, lang)
-	s.False(feature.SupportStickyQuery(), "Should not support sticky query")
+	s.False(feature.SupportFeature(), "Should not support feature")
+}
+
+// SupportStickyQuery whether a client support sticky query
+func (feature *FeatureImpl) SupportFeature() bool {
+	return feature.featureVersion.major > 0
 }

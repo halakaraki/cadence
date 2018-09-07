@@ -31,7 +31,6 @@ import (
 	workflow "github.com/uber/cadence/.gen/go/shared"
 	"github.com/uber/cadence/client/history"
 	"github.com/uber/cadence/common"
-	"github.com/uber/cadence/common/client"
 	"github.com/uber/cadence/common/logging"
 	"github.com/uber/cadence/common/metrics"
 	"github.com/uber/cadence/common/persistence"
@@ -305,21 +304,16 @@ pollLoop:
 				return emptyPollForDecisionTaskResponse, nil
 			}
 
-			clientFeature := client.NewFeatureImpl(
-				mutableStateResp.GetClientLibraryVersion(),
-				mutableStateResp.GetClientFeatureVersion(),
-				mutableStateResp.GetClientImpl(),
-			)
-
 			isStickyEnabled := false
-			if len(mutableStateResp.StickyTaskList.GetName()) != 0 && clientFeature.SupportStickyQuery() {
+			if len(mutableStateResp.StickyTaskList.GetName()) != 0 {
 				isStickyEnabled = true
 			}
 			resp := &h.RecordDecisionTaskStartedResponse{
-				PreviousStartedEventId: mutableStateResp.NextEventId,
-				NextEventId:            mutableStateResp.NextEventId,
-				WorkflowType:           mutableStateResp.WorkflowType,
-				StickyExecutionEnabled: common.BoolPtr(isStickyEnabled),
+				PreviousStartedEventId:    mutableStateResp.NextEventId,
+				NextEventId:               mutableStateResp.NextEventId,
+				WorkflowType:              mutableStateResp.WorkflowType,
+				StickyExecutionEnabled:    common.BoolPtr(isStickyEnabled),
+				WorkflowExecutionTaskList: mutableStateResp.TaskList,
 			}
 			tCtx.completeTask(nil)
 			return e.createPollForDecisionTaskResponse(tCtx, resp), nil
